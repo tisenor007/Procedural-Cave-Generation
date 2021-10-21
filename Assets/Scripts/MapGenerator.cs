@@ -5,7 +5,8 @@ using System;
 
 public class MapGenerator : MonoBehaviour
 {
-    public GameObject Player;
+    public GameObject player;
+    public GameObject[] scareTriggers = new GameObject[1];
     public Material caveMat;
 
     public int width;
@@ -23,6 +24,8 @@ public class MapGenerator : MonoBehaviour
     public int randomFillPercent;
 
     private Room bestRoomA = new Room();
+    private Room bestRoomB = new Room();
+    private List<Room> randomRooms = new List<Room>();
 
     private GameObject ground;
     private GameObject roof;
@@ -38,13 +41,14 @@ public class MapGenerator : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            GenerateMap();
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    GenerateMap();
+        //}
+        Debug.Log(randomRooms.Count);
     }
 
-    void GenerateMap()
+    public void GenerateMap()
     {
         ground.transform.parent = null;
         roof.transform.parent = null;
@@ -77,9 +81,9 @@ public class MapGenerator : MonoBehaviour
             }
         }
         //Player.transform.parent = this.transform;
-        
-        Player.transform.position = new Vector3(-width / 2 + .5f + bestRoomA.tiles[5].tileX, -4.5f, -height / 2 + .5f + bestRoomA.tiles[5].tileY);
+
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
+        meshGen.GenerateMesh(borderedMap, 1);
         if (meshGen.is2D == true && this.gameObject.GetComponent<EdgeCollider2D>() == null)
         {
             ground.transform.position = new Vector3(0, -1f, 0);
@@ -103,7 +107,17 @@ public class MapGenerator : MonoBehaviour
         }
         ground.transform.localScale = new Vector3(width / 10, 1, height / 10);
         roof.transform.localScale = new Vector3(width / 10, 1, height / 10);
-        meshGen.GenerateMesh(borderedMap, 1);
+
+        //placing items
+        player.transform.position = new Vector3(-width / 2 + 0.5f + bestRoomA.tiles[5].tileX, -4.5f, -height / 2 + 0.5f + bestRoomA.tiles[5].tileY);
+
+        for (int i = 0; i <= scareTriggers.Length - 1; i++)
+        {
+            //if (randomRooms[i] != bestRoomA && i !> randomRooms.Count) { 
+                scareTriggers[i].SetActive(true); scareTriggers[i].transform.position = new Vector3(-width / 2 + 3 + randomRooms[i].tiles[1].tileX, -4.5f, -height / 2 + randomRooms[i].tiles[5].tileY); //}
+            //else if (i > randomRooms.Count) { scareTriggers[i].SetActive(false); }
+            
+        }
     }
 
     void ProcessMap()
@@ -143,6 +157,7 @@ public class MapGenerator : MonoBehaviour
         survivingRooms[0].isAccessibleFromMainRoom = true;
 
         ConnectClosestRooms(survivingRooms);
+        randomRooms = survivingRooms;
     }
 
     void ConnectClosestRooms(List<Room> allRooms, bool forceAccessibilityFromMainRoom = false)
@@ -175,7 +190,6 @@ public class MapGenerator : MonoBehaviour
         Coord bestTileA = new Coord();
         Coord bestTileB = new Coord();
         
-        Room bestRoomB = new Room();
         bool possibleConnectionFound = false;
 
         foreach (Room roomA in roomListA)
