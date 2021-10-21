@@ -45,7 +45,7 @@ public class MeshGenerator : MonoBehaviour
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
 
-        int tileAmount = 10;
+        int tileAmount = 1;
         Vector2[] uvs = new Vector2[vertices.Count];
         for (int i=0; i< vertices.Count; i++)
         {
@@ -56,17 +56,20 @@ public class MeshGenerator : MonoBehaviour
         mesh.uv = uvs;
         if (is2D)
         {
+            this.gameObject.transform.eulerAngles = new Vector3(90, 0, 0);
             Generate2DColliders();
         }
         else
         {
+            this.gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
             CreateWallMesh();
         }
     }
 
     void CreateWallMesh()
     {
-
+        MeshCollider currentWallCollider = walls.gameObject.GetComponent<MeshCollider>();
+        Destroy(currentWallCollider);
         CalculateMeshOutlines();
 
         List<Vector3> wallVertices = new List<Vector3>();

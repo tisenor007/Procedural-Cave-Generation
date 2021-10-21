@@ -5,6 +5,8 @@ using System;
 
 public class MapGenerator : MonoBehaviour
 {
+    public GameObject Player;
+    public Material caveMat;
 
     public int width;
     public int height;
@@ -20,10 +22,17 @@ public class MapGenerator : MonoBehaviour
     [Range(0, 100)]
     public int randomFillPercent;
 
+    private Room bestRoomA = new Room();
+
+    private GameObject ground;
+    private GameObject roof;
+
     int[,] map;
 
     void Start()
     {
+        ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        roof = GameObject.CreatePrimitive(PrimitiveType.Plane);
         GenerateMap();
     }
 
@@ -37,6 +46,9 @@ public class MapGenerator : MonoBehaviour
 
     void GenerateMap()
     {
+        ground.transform.parent = null;
+        roof.transform.parent = null;
+
         map = new int[width, height];
         RandomFillMap();
 
@@ -64,8 +76,33 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-
+        //Player.transform.parent = this.transform;
+        
+        Player.transform.position = new Vector3(-width / 2 + .5f + bestRoomA.tiles[5].tileX, -4.5f, -height / 2 + .5f + bestRoomA.tiles[5].tileY);
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
+        if (meshGen.is2D == true && this.gameObject.GetComponent<EdgeCollider2D>() == null)
+        {
+            ground.transform.position = new Vector3(0, -1f, 0);
+            roof.transform.position = new Vector3(0, 0, 0);
+            roof.transform.eulerAngles = new Vector3(180, 0, 0);
+            ground.transform.parent = this.transform;
+            roof.transform.parent = this.transform;
+            roof.GetComponent<MeshRenderer>().enabled = false;
+            ground.GetComponent<MeshRenderer>().material.color = Color.black;
+        }
+        if (meshGen.is2D == false && this.gameObject.GetComponent<MeshCollider>() == null)
+        {
+            ground.transform.position = new Vector3(0, -5, 0);
+            roof.transform.position = new Vector3(0, 0, 0);
+            roof.transform.eulerAngles = new Vector3(180, 0, 0);
+            ground.transform.parent = this.transform;
+            roof.transform.parent = this.transform;
+            roof.GetComponent<MeshRenderer>().enabled = true;
+            roof.GetComponent<MeshRenderer>().material = caveMat;
+            ground.GetComponent<MeshRenderer>().material = caveMat;
+        }
+        ground.transform.localScale = new Vector3(width / 10, 1, height / 10);
+        roof.transform.localScale = new Vector3(width / 10, 1, height / 10);
         meshGen.GenerateMesh(borderedMap, 1);
     }
 
@@ -137,7 +174,7 @@ public class MapGenerator : MonoBehaviour
         int bestDistance = 0;
         Coord bestTileA = new Coord();
         Coord bestTileB = new Coord();
-        Room bestRoomA = new Room();
+        
         Room bestRoomB = new Room();
         bool possibleConnectionFound = false;
 
@@ -200,7 +237,7 @@ public class MapGenerator : MonoBehaviour
     void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB)
     {
         Room.ConnectRooms(roomA, roomB);
-        Debug.DrawLine(CoordToWorldPoint(tileA), CoordToWorldPoint(tileB), Color.green, 100);
+        //Debug.DrawLine(CoordToWorldPoint(tileA), CoordToWorldPoint(tileB), Color.green, 100);
 
         List<Coord> line = GetLine(tileA, tileB);
         foreach (Coord c in line)
