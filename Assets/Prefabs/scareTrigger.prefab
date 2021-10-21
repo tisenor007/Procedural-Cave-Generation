@@ -189,7 +189,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 2, y: 1, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!82 &8887482700555350792
 AudioSource:
@@ -203,7 +203,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: bf3e3c1d236057740a3ae5df47149eea, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -353,6 +353,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 21.106
       objectReference: {fileID: 0}
+    - target: {fileID: 4164600045616818, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4164600045616818, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4164600045616818, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4164600045616818, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4164600045616818, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
     - target: {fileID: 4228891489607126, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.9720426e-10
@@ -487,7 +507,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4747032228864168, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.25
       objectReference: {fileID: 0}
     - target: {fileID: 4747032228864168, guid: 4ed9c6a88176ac747b2c2f5b13b6e851, type: 3}
       propertyPath: m_LocalPosition.z

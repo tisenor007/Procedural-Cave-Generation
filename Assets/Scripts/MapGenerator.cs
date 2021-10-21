@@ -6,7 +6,8 @@ using System;
 public class MapGenerator : MonoBehaviour
 {
     public GameObject player;
-    public GameObject[] scareTriggers = new GameObject[1];
+    public GameObject Cam2D;
+    public GameObject[] scareTriggers;
     public Material caveMat;
 
     public int width;
@@ -29,7 +30,8 @@ public class MapGenerator : MonoBehaviour
 
     private GameObject ground;
     private GameObject roof;
-
+    private GameObject[] availableTriggers;
+    private int generateCoolDown = 3;
     int[,] map;
 
     void Start()
@@ -45,11 +47,24 @@ public class MapGenerator : MonoBehaviour
         //{
         //    GenerateMap();
         //}
-        Debug.Log(randomRooms.Count);
+        //Debug.Log(scareTriggers.Length);
+    }
+    public void RegenerateCave()
+    {
+        if (Time.time > generateCoolDown)
+        {
+            GenerateMap();
+            generateCoolDown = Mathf.RoundToInt(Time.time) + 3;
+        }
     }
 
     public void GenerateMap()
     {
+        //scareTriggers = new GameObject[randomRooms.Count]; 
+        for (int i = 0; i <= scareTriggers.Length - 1; i++)
+        {
+            scareTriggers[i].SetActive(false);
+        }
         ground.transform.parent = null;
         roof.transform.parent = null;
 
@@ -83,7 +98,6 @@ public class MapGenerator : MonoBehaviour
         //Player.transform.parent = this.transform;
 
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
-        meshGen.GenerateMesh(borderedMap, 1);
         if (meshGen.is2D == true && this.gameObject.GetComponent<EdgeCollider2D>() == null)
         {
             ground.transform.position = new Vector3(0, -1f, 0);
@@ -107,16 +121,44 @@ public class MapGenerator : MonoBehaviour
         }
         ground.transform.localScale = new Vector3(width / 10, 1, height / 10);
         roof.transform.localScale = new Vector3(width / 10, 1, height / 10);
+        meshGen.GenerateMesh(borderedMap, 1);
 
         //placing items
-        player.transform.position = new Vector3(-width / 2 + 0.5f + bestRoomA.tiles[5].tileX, -4.5f, -height / 2 + 0.5f + bestRoomA.tiles[5].tileY);
-
-        for (int i = 0; i <= scareTriggers.Length - 1; i++)
+        if (meshGen.is2D == false)
         {
-            //if (randomRooms[i] != bestRoomA && i !> randomRooms.Count) { 
-                scareTriggers[i].SetActive(true); scareTriggers[i].transform.position = new Vector3(-width / 2 + 3 + randomRooms[i].tiles[1].tileX, -4.5f, -height / 2 + randomRooms[i].tiles[5].tileY); //}
-            //else if (i > randomRooms.Count) { scareTriggers[i].SetActive(false); }
-            
+            player.SetActive(true);
+            Cam2D.SetActive(false);
+            player.transform.position = new Vector3(-width / 2 + 0.5f + bestRoomA.tiles[5].tileX, -4.5f, -height / 2 + 0.5f + bestRoomA.tiles[5].tileY);
+            availableTriggers = new GameObject[randomRooms.Count];
+            if (availableTriggers.Length > scareTriggers.Length)
+            {
+                for (int t = 0; t <= scareTriggers.Length - 1; t++)
+                {
+                    availableTriggers[t] = scareTriggers[t];
+                }
+                for (int i = 0; i <= availableTriggers.Length - 1; i++)
+                {
+                    if (randomRooms[i] != bestRoomA && availableTriggers[i] != null) { availableTriggers[i].SetActive(true); availableTriggers[i].transform.position = new Vector3(-width / 2 + 3 + randomRooms[i].tiles[1].tileX, -4.5f, -height / 2 + randomRooms[i].tiles[5].tileY); }
+                    //else if (i > randomRooms.Count) { scareTriggers[i].SetActive(false); }
+                }
+            }
+            else if (scareTriggers.Length >= availableTriggers.Length)
+            {
+                for (int t = 0; t <= availableTriggers.Length - 1; t++)
+                {
+                    availableTriggers[t] = scareTriggers[t];
+                }
+                for (int i = 0; i < availableTriggers.Length - 1; i++)
+                {
+                    if (randomRooms[i] != bestRoomA && availableTriggers[i] != null) { availableTriggers[i].SetActive(true); availableTriggers[i].transform.position = new Vector3(-width / 2 + 3 + randomRooms[i].tiles[1].tileX, -4.5f, -height / 2 + randomRooms[i].tiles[5].tileY); }
+                    //else if (i > randomRooms.Count) { scareTriggers[i].SetActive(false); }
+                }
+            }
+        }
+        else if (meshGen.is2D == true)
+        {
+            player.SetActive(false);
+            Cam2D.SetActive(true);
         }
     }
 
